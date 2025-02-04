@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud.ab - Download & Upload Files</title>
+    <title>Cloud.ab - Download Files</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -28,27 +28,43 @@
 <body>
     <div class="container">
         <h1>Welcome to Cloud.ab</h1>
-        <p>Upload and download your files securely.</p>
-        
-        <h3>Upload a File</h3>
-        <input type="file" id="fileUpload">
-        <button onclick="uploadFile()">Upload</button>
+        <p>Enter a code to download your file.</p>
         
         <h3>Download a File</h3>
-        <input type="text" id="fileName" placeholder="Enter file name">
+        <input type="text" id="fileCode" placeholder="Enter 5-digit code">
         <button onclick="downloadFile()">Download</button>
+        <p><a href="upload.html">Upload a file</a></p>
     </div>
 
     <script>
-        function uploadFile() {
-            alert("File uploaded successfully!");
+        const fileDatabase = {};
+
+        function generateCode() {
+            return Math.floor(10000 + Math.random() * 90000).toString();
         }
-        function downloadFile() {
-            let fileName = document.getElementById("fileName").value;
-            if (fileName) {
-                alert("Downloading " + fileName);
+
+        function uploadFile() {
+            const fileInput = document.getElementById("fileUpload");
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const code = generateCode();
+                fileDatabase[code] = file.name;
+                alert(`File uploaded successfully! Your code: ${code}`);
             } else {
-                alert("Please enter a file name.");
+                alert("Please select a file to upload.");
+            }
+        }
+
+        function downloadFile() {
+            let code = document.getElementById("fileCode").value;
+            if (fileDatabase[code]) {
+                let fileName = fileDatabase[code];
+                if (confirm(`Are you sure you want to download ${fileName}?`)) {
+                    alert(`Downloading ${fileName}...`);
+                    // Here, implement actual file retrieval logic from GitHub storage.
+                }
+            } else {
+                alert("Invalid code. Please try again.");
             }
         }
     </script>
